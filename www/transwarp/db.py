@@ -140,7 +140,7 @@ class _Engine(object):
 
 
 def create_engine(user, password, database, host = '127.0.0.1', port = 3306, **kw):
-    import mysql.connector
+    import mysql.connector as connector
     global engine
     if engine is not None:
         raise DBError('Engine is already initialized')
@@ -150,7 +150,7 @@ def create_engine(user, password, database, host = '127.0.0.1', port = 3306, **k
         params[k] = kw.pop(k, v)
     params.update(kw)
     params['buffered'] = True
-    engine = _Engine(lambda: mysql.connector.connect(**params))
+    engine = _Engine(lambda: connector.connect(**params))
     # test connection...
     logging.info('Init mysql engine <%s> ok.' % hex(id(engine)))
 

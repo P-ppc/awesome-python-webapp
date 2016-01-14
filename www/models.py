@@ -29,7 +29,7 @@ class Blog(Model):
     user_name = StringField(ddl = 'varchar(50)')
     user_image = StringField(ddl = 'varchar(500)')
     name = StringField(ddl = 'varchar(50)')
-    summary = StringFiled(ddl = 'varchar(200)')
+    summary = StringField(ddl = 'varchar(200)')
     content = TextField()
     created_at = FloatField(updatable = False, default = time.time)
 

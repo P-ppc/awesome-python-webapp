@@ -58,7 +58,7 @@ class Dict(dict):
     def __setattr__(self, key, value):
         self[key] = value
 
-_TIMEDELTA_ZERO = datatime.timedelta(0)
+_TIMEDELTA_ZERO = datetime.timedelta(0)
 
 # timezone as UTC+8:00, UTC-10:00
 
@@ -118,7 +118,7 @@ class UTC(datetime.tzinfo):
     def __str__(self):
         return 'UTC tzinfo object (%s)' % self._tzname
 
-    __repr__ == __str__
+    __repr__ = __str__
 
 # all known response statuses:
 
@@ -184,7 +184,7 @@ _RESPONSE_STATUSES = {
     510: 'Not Extended',
 }
 
-_RE_RESPONSE_STATUS = re.complie(r'^\d\d\d(\ [\w\ ]+)?$')
+_RE_RESPONSE_STATUS = re.compile(r'^\d\d\d(\ [\w\ ]+)?$')
 
 _RESPONSE_HEADERS = (
     'Accept-Ranges',
@@ -479,7 +479,7 @@ def post(path):
         return func
     return _decorator
 
-_re_route = re.complie(r'(\:[a-zA-z]\w*)')
+_re_route = re.compile(r'(\:[a-zA-z]\w*)')
 
 def _build_regex(path):
     r'''
@@ -940,7 +940,7 @@ class Response(object):
         >>> r.header('content-type')
         '''
         key = name.upper()
-        if not key on _RESPONSE_HEADER_DICT:
+        if not key in _RESPONSE_HEADER_DICT:
             key = name
         if key in self._headers:
             del self._headers[key]
@@ -1408,7 +1408,7 @@ class WSGIApplication(object):
             
     def add_url(self, func):
         self._check_not_running()
-        route = Roure(func)
+        route = Route(func)
         if route.is_static:
             if route.method == 'GET':
                 self._get_static[route.path] = route
@@ -1429,19 +1429,19 @@ class WSGIApplication(object):
     def run(self, port = 9000, host = '127.0.0.1'):
         from wsgiref.simple_server import make_server
         logging.info('application (%s) will start at %s:%s...' % (self._document_root, host, port))
-        server = make_server(host, port, self.get_wsgi_applicaton(debug = True))
+        server = make_server(host, port, self.get_wsgi_application(debug = True))
         server.serve_forever()
 
     def get_wsgi_application(self, debug = False):
         self._check_not_running()
         if debug:
             self._get_dynamic.append(StaticFileRoute())
-        slef._running = True
+        self._running = True
 
         _application = Dict(document_root = self._document_root)
 
         def fn_route():
-            rquest_method = ctx.request.request_method
+            request_method = ctx.request.request_method
             path_info = ctx.request.path_info
             if request_method == 'GET':
                 fn = self._get_static.get(path_info, None)
@@ -1466,7 +1466,7 @@ class WSGIApplication(object):
         fn_exec = _build_interceptor_chain(fn_route, *self._interceptors)
 
         def wsgi(env, start_response):
-            ctx.appliction = _appliction
+            ctx.application = _application
             ctx.request = Request(env)
             response = ctx.response = Response()
             try:
@@ -1492,7 +1492,7 @@ class WSGIApplication(object):
                     start_response('500 Internal Server Error', [])
                     return ['<html><body><h1>500 Internal Server Error</h1></body></html>']
                 exc_type, exc_value, exc_traceback = sys.exc_info()
-                fp = StringIO
+                fp = StringIO()
                 traceback.print_exception(exc_type, exc_value, exc_traceback, file = fp)
                 stacks = fp.getvalue()
                 fp.close()

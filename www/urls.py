@@ -9,5 +9,5 @@ from models import User, Blog, Comment
 @view('test_users.html')
 @get('/')
 def test_users():
-    users = Users.find_all()
+    users = User.find_all()
     return dict(users = users)

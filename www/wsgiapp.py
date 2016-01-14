@@ -27,4 +27,4 @@ import urls
 wsgi.add_module(urls)
 
 if __name__ == '__main__':
-    wsgi.run(9000)
+    wsgi.run(9000, '0.0.0.0')
