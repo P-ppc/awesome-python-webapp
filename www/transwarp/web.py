@@ -49,7 +49,7 @@ class Dict(dict):
         for k, v in zip(names, values):
             self[k] = v
 
-    def __getattr(self, key):
+    def __getattr__(self, key):
         try:
             return self[key]
         except KeyError:
@@ -1513,7 +1513,3 @@ if __name__ == '__main__':
     sys.path.append('.')
     import doctest
     doctest.testmod()
-
-
-     
-         

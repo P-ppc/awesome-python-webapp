@@ -235,7 +235,7 @@ class Model(dict):
         return cls(**d) if d else None
 
     @classmethod
-    def find_first(cls, where, *arg):
+    def find_first(cls, where, *args):
         '''
         Find by where clause and return one result. If multiple results found,
         only the first one returned. If no result found, return None.
