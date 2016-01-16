@@ -849,7 +849,7 @@ class Request(object):
     def _get_cookies(self):
         if not hasattr(self, '_cookies'):
             cookies = {}
-            cookie_str = self._envirno.get('HTTP_COOKIE')
+            cookie_str = self._environ.get('HTTP_COOKIE')
             if cookie_str:
                 for c in cookie_str.split(';'):
                     pos = c.find('=')
@@ -1282,7 +1282,7 @@ def interceptor(pattern='/'):
     def _decorator(func):
         func.__interceptor__ = _build_pattern_fn(pattern)
         return func
-    return _decoratro
+    return _decorator
 
 def _build_interceptor_fn(func, next):
     def _wrapper():
