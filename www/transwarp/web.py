@@ -651,6 +651,22 @@ class Request(object):
             return r[0]
         return r
 
+    def get(self, key, default = None):
+        '''
+        The same as request[key], but return default value if key is not found.
+        >>> from StringIO import StringIO
+        >>> r = Request({'REQUEST_METHOD': 'POST', 'wsgi.input': StringIO('a=1&b=M%20M&c=ABC&c=XYZ&e=')})
+        >>> r.get('a')
+        u'1'
+        >>> r.get('empty')
+        >>> r.get('empty', 'DEFAULT')
+        'DEFAULT'
+        '''
+        r = self._get_raw_input().get(key, default)
+        if isinstance(r, list):
+            return r[0]
+        return r
+
     def gets(self, key):
         '''
         Get multiple values for specified key.
