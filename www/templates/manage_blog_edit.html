@@ -15,16 +15,22 @@ var vm;
 $(function() {
     vm = new Vue({
         el: '#form-blog',
+        data: {
+            name: '',
+            summary: '',
+            content: ''
+        },
         methods: {
             submit: function(event) {
-                event.perventDefault();
+                event.preventDefault();
                 postApi(action, this.$data, function(err, r) {
                     if (err) {
+                        console.log(err);
                         alert(err);
                     }
                     else {
                         alert('保存成功！');
-                        return location.assign(redirect);
+                        //return location.assign(redirect);
                     }
                 });
             }
