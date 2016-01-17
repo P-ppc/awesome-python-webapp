@@ -1053,7 +1053,7 @@ class Response(object):
         if not hasattr(self, '_cookies'):
             self._cookies = {}
         L = ['%s=%s' % (_quote(name), _quote(value))]
-        if expireds is not None:
+        if expires is not None:
             if isinstance(expires, (float, int , long)):
                 L.append('Expires=%s' % datetime.datetime.fromtimestamp(expires, UTC_0).strftime('%a, %d-%b-%Y %H:%M:%S GMT'))
             if isinstance(expires, (datetime.date, datetime.datetime)):
@@ -1061,7 +1061,7 @@ class Response(object):
         elif isinstance(max_age, (int, long)):
             L.append('Max-Age=%d' % max_age)
         L.append('Path=%s' % path)
-        if domian:
+        if domain:
             L.append('Domain=%s' % domain)
         if secure:
             L.append('Secure')
