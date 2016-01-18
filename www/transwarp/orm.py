@@ -304,7 +304,7 @@ class Model(dict):
         for k, v in self.__mappings__.iteritems():
             if v.insertable:
                 if not hasattr(self, k):
-                    set(self, k, v.default)
+                    setattr(self, k, v.default)
                 params[v.name] = getattr(self, k)
         db.insert('%s' % self.__table__, **params)
         return self

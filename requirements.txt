@@ -1,6 +1,10 @@
 Jinja2==2.8
 MarkupSafe==0.23
 MySQL-python==1.2.5
+PyYAML==3.11
+argh==0.26.1
 argparse==1.2.1
 mysql-connector-python==2.0.3
+pathtools==0.1.2
+watchdog==0.8.3
 wsgiref==0.1.2

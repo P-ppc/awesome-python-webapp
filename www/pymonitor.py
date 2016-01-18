@@ -29,7 +29,7 @@ def kill_process():
         log('Kill process [%s]...' % process.pid)
         process.kill()
         process.wait()
-        log('Process ended with code %s.' % returncode)
+        log('Process ended with code %s.' % process.returncode)
         process = None
 
 def start_process():

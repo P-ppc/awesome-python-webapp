@@ -411,12 +411,12 @@ def _update(sql, *args):
     logging.info('SQL: %s, ARGS: %s' % (sql, args))
     try:
         cursor = _db_ctx.connection.cursor()
-        cursor.excute(sql, args)
+        cursor.execute(sql, args)
         r = cursor.rowcount
         if _db_ctx.transactions == 0:
             # no transaction enviroment:
             logging.info('auto commit')
-            db_ctx.connection.commit()
+            _db_ctx.connection.commit()
         return r
     finally:
         if cursor:

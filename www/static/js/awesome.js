@@ -167,7 +167,7 @@ function showConfirm(title, text, fn_ok, fn_cancel) {
             '</p></div></div>';
     $('body').append(s);
     var m = $('#div-confirm');
-    var modal = new $.UIkit.modal.Modal('#div-confirm');
+    var modal = new $.UIkit.modal('#div-confirm');
     m.find('.x-title').text(title);
     m.find('.x-text').text(text);
     m.find('.x-ok').click(function() {
