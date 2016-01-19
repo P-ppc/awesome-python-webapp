@@ -21,7 +21,7 @@ class Field(object):
         self.updatable = kw.get('updatable', True)
         self.insertable = kw.get('insertable', True)
         self.ddl = kw.get('ddl', '')
-        self.order = Field._count
+        self._order = Field._count
         Field._count = Field._count + 1
 
     @property
@@ -179,7 +179,7 @@ class Model(dict):
     ...         self.last_modified = time.time()
     >>> u = User(id = 10190, name = 'Michael', email = 'orm@db.org')
     >>> r = u.insert()
-    >>> u.emali
+    >>> u.email
     'orm@db.org'
     >>> u.passwd
     '******'
@@ -200,16 +200,16 @@ class Model(dict):
     >>> r = g.delete()
     >>> len(db.select('select * from user where id = 10190'))
     0
-    >>> import josn
+    >>> import json
     >>> print User().__sql__()
     -- generating SQL for user:
     create table `user` (
-        `id` bigint not null,
-        `name` varchar(255) not null,
-        `email` varchar(255) not null,
-        `passwd` varchar(255) not null,
-        `last_modified` real not null,
-        primary key(`id`)
+     `id` bigint not null,
+     `name` varchar(255) not null,
+     `email` varchar(255) not null,
+     `passwd` varchar(255) not null,
+     `last_modified` real not null,
+     primary key (`id`)
     );
     '''
     __metaclass__ = ModelMetaclass
@@ -313,6 +313,6 @@ if __name__ == '__main__':
     logging.basicConfig(level = logging.DEBUG)
     db.create_engine('www-data', 'www-data', 'test')
     db.update('drop table if exists user')
-    db.update('create table user (id int primary key, name textm email text, passwd text, last_modified real)')
+    db.update('create table user (id int primary key, name text, email text, passwd text, last_modified real)')
     import doctest
     doctest.testmod()

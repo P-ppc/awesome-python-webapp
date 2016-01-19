@@ -112,7 +112,7 @@ class UTC(datetime.tzinfo):
     def dst(self, dt):
         return _TIMEDELTA_ZERO
 
-    def tznamme(self, dt):
+    def tzname(self, dt):
         return self._tzname
 
     def __str__(self):
@@ -300,7 +300,7 @@ def uanuthorized():
     '''
     Send an unauthorized response.
 
-    >>> raise unauthorized()
+    >>> raise uanuthorized()
     Traceback (most recent call last):
         ...
     HttpError: 401 Unauthorized
@@ -633,7 +633,7 @@ class Request(object):
             ...
         KeyError: 'empty'
         >>> b = '----WebKitFormBoundaryQQ3J8kPsjFpTmqNz'
-        >>> pl = ['--%s' % b, 'Content-Disposition: form-data; name=\\"name\\"\\n', 'Scofield', '--%s' % b, 'Content-Disposition: form-data; name=\\"name\\"\\n', 'Lincoln', '--%s' % b, 'Content-Disposition: form-data; name=\\"file\\"; filename=\\"test.txt\\"', 'Content-Type: text/plain\\n', 'just a test', '--%s' % b, 'Content-Disposition: form-data; name=\\"id\\"\\n', '4008009001', '--%s--' % b, '']
+        >>> p1 = ['--%s' % b, 'Content-Disposition: form-data; name=\\"name\\"\\n', 'Scofield', '--%s' % b, 'Content-Disposition: form-data; name=\\"name\\"\\n', 'Lincoln', '--%s' % b, 'Content-Disposition: form-data; name=\\"file\\"; filename=\\"test.txt\\"', 'Content-Type: text/plain\\n', 'just a test', '--%s' % b, 'Content-Disposition: form-data; name=\\"id\\"\\n', '4008009001', '--%s--' % b, '']
         >>> payload = '\\n'.join(p1)
         >>> r = Request({'REQUEST_METHOD':'POST', 'CONTENT_LENGTH':str(len(payload)), 'CONTENT_TYPE':'multipart/form-data; boundary=%s' % b, 'wsgi.input':StringIO(payload)}) 
         >>> r.get('name')
@@ -695,7 +695,7 @@ class Request(object):
         i.role ==> 'guest'
 
         >>> from StringIO import StringIO
-        >>> r = Request({'REQUEST_METHOD': 'POST', 'wsgi.input':StringIO('a=1&b=M%20M&c=ABC&c=XYZ&e='})
+        >>> r = Request({'REQUEST_METHOD': 'POST', 'wsgi.input':StringIO('a=1&b=M%20M&c=ABC&c=XYZ&e=')})
         >>> i = r.input(x = 2008)
         >>> i.a
         u'1'
@@ -801,7 +801,7 @@ class Request(object):
         
         >>> r = Request({'PATH_INFO': '/test/a%20b.html'})
         >>> r.path_info
-        '/test/a b.html
+        '/test/a b.html'
         '''
         return urllib.unquote(self._environ.get('PATH_INFO', '')) 
 
@@ -810,7 +810,7 @@ class Request(object):
         '''
         Get request host as str. Default to '' if cannot get host.
 
-        >>> r = Request({'HTTP_HOST', 'localhost:8080'})
+        >>> r = Request({'HTTP_HOST': 'localhost:8080'})
         >>> r.host
         'localhost:8080'
         '''
@@ -1057,12 +1057,12 @@ class Response(object):
         >>> r = Response()
         >>> r.set_cookie('company', 'Abc, Inc.', max_age = 3600)
         >>> r._cookies
-        {'company': 'company=Abc%2c%20Inc.; Max-Age=3600; Path=/; HttpOnly'}
-        >>> r.set_cookie('company', r'Example="Limited"', expires=134227494.123, path='/sub/')
+        {'company': 'company=Abc%2C%20Inc.; Max-Age=3600; Path=/; HttpOnly'}
+        >>> r.set_cookie('company', r'Example="Limited"', expires=1342274794.123, path='/sub/')
         >>> r._cookies
         {'company': 'company=Example%3D%22Limited%22; Expires=Sat, 14-Jul-2012 14:06:34 GMT; Path=/sub/; HttpOnly'}
         >>> dt = datetime.datetime(2012, 7, 14, 22, 6, 34, tzinfo = UTC('+8:00'))
-        >>> r.ste_cookie('company', 'Expires', expires = dt)
+        >>> r.set_cookie('company', 'Expires', expires = dt)
         >>> r._cookies
         {'company': 'company=Expires; Expires=Sat, 14-Jul-2012 14:06:34 GMT; Path=/; HttpOnly'}
         '''
@@ -1192,7 +1192,7 @@ class Template(object):
         >>> t.model['title']
         'Hello'
         >>> t.model['copyright']
-        '@2012
+        '@2012'
         >>> t = Template('test.html', abc = u'ABC', xyz = u'XYZ')
         >>> t.model['abc']
         u'ABC'
@@ -1211,9 +1211,9 @@ class Jinja2TemplateEngine(TemplateEngine):
     '''
     Render using jinja2 template engine.
 
-    >>> templ_path = os.path.join(os.path.dirname(os.path.dirname(os.path.asbpath(__file__))), 'test')
+    >>> templ_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'test')
     >>> engine = Jinja2TemplateEngine(templ_path)
-    >>> engine.add_filter('datetime', lambda dt: dt.strftime('%Y-%m-%d %H:%M:%s'))
+    >>> engine.add_filter('datetime', lambda dt: dt.strftime('%Y-%m-%d %H:%M:%S'))
     >>> engine('jinja2-test.html', dict(name='Michael', posted_at = datetime.datetime(2014, 6, 1, 10, 11, 12)))
     '<p>Hello, Michael.</p><span>2014-06-01 10:11:12</span>'
     '''
@@ -1333,7 +1333,7 @@ def _build_interceptor_chain(last_fn, *interceptors):
     ...         return next()
     ...     finally:
     ...         print 'after f3()'
-    >>> chain = _bulid_interceptor_chain(target, f1, f2, f3)
+    >>> chain = _build_interceptor_chain(target, f1, f2, f3)
     >>> ctx.request = Dict(path_info = '/test/abc')
     >>> chain()
     before f1()
@@ -1375,7 +1375,8 @@ def _load_module(module_name):
     last_dot = module_name.rfind('.')
     if last_dot == (-1):
         return __import__(module_name, globals(), locals())
-    from_module = module_name[last_dot + 1:]
+    from_module = module_name[: last_dot]
+    import_module = module_name[last_dot + 1:]
     m = __import__(from_module, globals(), locals(), [import_module])
     return getattr(m, import_module)
 
